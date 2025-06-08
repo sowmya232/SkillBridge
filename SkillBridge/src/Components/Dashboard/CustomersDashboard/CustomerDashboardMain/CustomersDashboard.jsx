@@ -8,9 +8,7 @@ const CustomersDashboard = () => {
      <div className='customers_dashboard_parent'>
         <div id="left_side_options">
            <Link to="viewprofiles">View Profiles</Link>
-           <Link>What are you looking for</Link>
-           {/* <Link><h3>New Job Requests</h3></Link>
-           <Link><h3>Earnings</h3></Link> */}
+           
         </div>
         <div id="main">
             <Outlet></Outlet>
