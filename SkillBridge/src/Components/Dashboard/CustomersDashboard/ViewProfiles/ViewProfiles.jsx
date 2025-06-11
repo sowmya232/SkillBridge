@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import './ViewProfiles.css'
 
 let loggedInUser = JSON.parse(localStorage.getItem('loggedInCustomer'));
 
@@ -17,6 +18,32 @@ const ViewProfiles = () => {
   const [selectedWorker, setSelectedWorker] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
   const [location, setLocation] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+
+  /////////////////////////////////////////////////////////////
+
+  const [allWorkers, setAllWorkers] = useState([]);
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [filteredData, setFilteredData] = useState([]);
+
+
+
+  /////////////////////////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+const [selectedTrade, setSelectedTrade] = useState('');
+const [selectedAvailability, setSelectedAvailability] = useState('');
+const [selectedArea, setSelectedArea] = useState('');
+const [minRate, setMinRate] = useState('');
+const [maxRate, setMaxRate] = useState('');
+const [selectedRating, setSelectedRating] = useState('');
+
+
+  //////////////////////////////////////////////////////////////////////////////////////////
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,10 +54,11 @@ const ViewProfiles = () => {
           ...doc.data()
         }));
         setWorkers(data);
+        setAllWorkers(data);
       } catch (error) {
         console.error('Error fetching workers:', error);
       }
-    };
+    };  
     fetchData();
   }, []);
 
@@ -54,6 +82,7 @@ const ViewProfiles = () => {
         workerId: selectedWorker.uid,
         serviceType: selectedService.typeOfTrade,
         location,
+        selectedDate,
         status: 'Pending',
         bookedAt: new Date().toISOString()
       };
@@ -85,9 +114,64 @@ const ViewProfiles = () => {
     }
   };
 
+
+  const applyFilters = () => {
+  const filtered = allWorkers.filter(worker => {
+    if (!Array.isArray(worker.services)) return false;
+
+    return worker.services.some(service => {
+      const matchesTrade = selectedTrade ? service.typeOfTrade === selectedTrade : true;
+      const matchesAvailability = selectedAvailability ? service.availability === selectedAvailability : true;
+      const matchesArea = selectedArea ? service.workArea === selectedArea : true;
+      const rate = Number(service.consultation);
+      const matchesMinRate = minRate ? rate >= Number(minRate) : true;
+      const matchesMaxRate = maxRate ? rate <= Number(maxRate) : true;
+      const matchesRating = selectedRating ? Number(service.rating || 0) >= Number(selectedRating) : true;
+
+      return (
+        matchesTrade &&
+        matchesAvailability &&
+        matchesArea &&
+        matchesMinRate &&
+        matchesMaxRate &&
+        matchesRating
+      );
+    });
+  });
+
+  setWorkers(filtered);
+  setShowFilterModal(false);
+};
+
+
+const resetFilters = () => {
+  setSelectedTrade('');
+  setSelectedAvailability('');
+  setSelectedArea('');
+  setMinRate('');
+  setMaxRate('');
+  setSelectedRating('');
+  setWorkers(allWorkers); // Show all profiles again
+  setShowFilterModal(false); // Close the modal
+};
+
+
+
+
+
   return (
     <div className="container mt-4">
-      <h2 className="mb-4">Available Workers</h2>
+      <div id='top_filter'>
+        <h2 className="mb-4">Available Workers</h2>
+        <Button variant="outline-primary" className="mb-3" onClick={() => setShowFilterModal(true)} >  🔍 Filter Profiles  </Button>
+      </div>
+    
+      {/* <Card className="mb-4 p-3 shadow-sm">
+ 
+      </Card>  */}
+
+
+
       <Row xs={1} md={2} className="g-4">
         {workers.map(worker =>
           Array.isArray(worker.services) ? (
@@ -153,6 +237,17 @@ const ViewProfiles = () => {
               required
             />
           </Form.Group>
+
+          <Form.Group controlId="date">
+            <Form.Label>Select a date:</Form.Label>
+            <Form.Control
+              type="date"
+              value={selectedDate}
+              onChange={e => setSelectedDate(e.target.value)}
+              required
+            />
+          </Form.Group>
+
         </Modal.Body>
         <Modal.Footer>
           <Button variant="success" onClick={handleConfirmBooking}>
@@ -160,6 +255,148 @@ const ViewProfiles = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+
+
+      {/* ------------------------------------------------------------------------------------------------- */}
+
+  
+
+  <Modal show={showFilterModal} onHide={() => setShowFilterModal(false)} centered size="lg">
+    <Modal.Header closeButton>
+      <Modal.Title>Filter Workers</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+    <Card className="mb-4 p-3 shadow-sm">
+        <Row className="g-3">
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label>Type of Trade</Form.Label>
+              <Form.Select value={selectedTrade} onChange={(e) => setSelectedTrade(e.target.value)}>
+                <option value="">All</option>
+                <option value="AC & Appliance Repair">AC & Appliance Repair</option>
+                <option value="Cleaning Pest Control">Cleaning Pest Control</option>
+                <option value="Electrician">Electrician</option>
+                <option value="Plumber">Plumber</option>
+                <option value="Carpenter">Carpenter</option>
+                <option value="Painting & Waterproofing">Painting & Waterproofing</option>
+                <option value="Wall Panels">Wall Panels</option>
+                <option value="Native Water Purifiers">Native Water Purifiers</option>
+                <option value="Native Smart Locks">Native Smart Locks</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label>Availability</Form.Label>
+              <Form.Select value={selectedAvailability} onChange={(e) => setSelectedAvailability(e.target.value)}>
+                <option value="">All</option>
+                <option value="Immediate">Immediate</option>
+                <option value="Within 24h">Within 24h</option>
+                <option value="Scheduled">Scheduled</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label>Work Area</Form.Label>
+              <Form.Select value={selectedArea} onChange={(e) => setSelectedArea(e.target.value)}>
+                <option value="">All</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Bangalore">Bangalore</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label>Consultation Rate</Form.Label>
+              <div className="d-flex gap-2">
+                <Form.Control
+                  type="number"
+                  placeholder="Min"
+                  value={minRate}
+                  onChange={(e) => setMinRate(e.target.value)}
+                />
+                <Form.Control
+                  type="number"
+                  placeholder="Max"
+                  value={maxRate}
+                  onChange={(e) => setMaxRate(e.target.value)}
+                />
+              </div>
+            </Form.Group>
+          </Col>
+
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label>Rating</Form.Label>
+              <Form.Select value={selectedRating} onChange={(e) => setSelectedRating(e.target.value)}>
+                <option value="">All</option>
+                <option value="4">4 ⭐ and above</option>
+                <option value="3">3 ⭐ and above</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+        </Row>
+      </Card>
+
+    </Modal.Body>
+    <Modal.Footer>
+      <Button variant="warning" onClick={resetFilters}>
+        Reset Filters
+      </Button>
+
+     <Button variant="primary" onClick={applyFilters}>
+        Apply Filters
+      </Button>
+    </Modal.Footer>
+  </Modal>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
   );
 };
