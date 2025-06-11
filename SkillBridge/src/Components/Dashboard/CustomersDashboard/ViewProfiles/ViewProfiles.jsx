@@ -74,6 +74,7 @@ const [selectedRating, setSelectedRating] = useState('');
   };
 
   const handleConfirmBooking = async () => {
+    console.log('cofirm booking is clicked')
     if (!location || !loggedInUser || !selectedWorker || !selectedService) return;
 
     try {
@@ -99,7 +100,8 @@ const [selectedRating, setSelectedRating] = useState('');
           customerId: loggedInUser.uid,
           serviceType: selectedService.typeOfTrade,
           location,
-          status: 'Pending',
+          selectedDate,
+          status: 'Pending', 
           bookedAt: new Date().toISOString()
         })
       });

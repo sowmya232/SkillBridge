@@ -7,6 +7,7 @@ import WorkersDashboard from './Components/Dashboard/WorkersDashboard/WorkersDah
 import CustomersDashboard from './Components/Dashboard/CustomersDashboard/CustomerDashboardMain/CustomersDashboard'
 import Myprofile from './Components/Dashboard/WorkersDashboard/MyProfile/Myprofile';
 import ViewProfiles from './Components/Dashboard/CustomersDashboard/ViewProfiles/ViewProfiles';
+import MyRequests from './Components/Dashboard/CustomersDashboard/MyRequests/MyRequests';
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
         {/* Customers Dashboard Route */}
         <Route path='/customersdashboard' element={<CustomersDashboard />} >
              <Route path='viewprofiles' element={<ViewProfiles />} />
+             <Route path='myrequests' element={<MyRequests />} />
               
           </Route>
 

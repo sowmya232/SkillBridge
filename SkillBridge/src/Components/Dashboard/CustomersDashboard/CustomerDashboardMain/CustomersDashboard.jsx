@@ -8,6 +8,7 @@ const CustomersDashboard = () => {
      <div className='customers_dashboard_parent'>
         <div id="left_side_options">
            <Link to="viewprofiles">View Profiles</Link>
+            <Link to="myrequests">My Requests</Link>
            
         </div>
         <div id="main">
