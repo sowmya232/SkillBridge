@@ -6,10 +6,10 @@ const WorkersDashboard = () => {
   return (
     <div className='wokers_dashboard_parent'>
         <div id="left_side_options">
-           <Link to="myprofile">Myprofile</Link>
-           {/* <Link><h3>Active Jobs List</h3></Link>
-           <Link><h3>New Job Requests</h3></Link>
-           <Link><h3>Earnings</h3></Link> */}
+           <Link to="myprofile">My Profile</Link>
+           <Link>Active Jobs List</Link>
+           <Link to="newrequest">New Job Requests</Link>
+           <Link>Earnings</Link>
         </div>
         <div id="main">
             <Outlet></Outlet>

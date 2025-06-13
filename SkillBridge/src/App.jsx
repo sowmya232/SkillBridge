@@ -8,6 +8,7 @@ import CustomersDashboard from './Components/Dashboard/CustomersDashboard/Custom
 import Myprofile from './Components/Dashboard/WorkersDashboard/MyProfile/Myprofile';
 import ViewProfiles from './Components/Dashboard/CustomersDashboard/ViewProfiles/ViewProfiles';
 import MyRequests from './Components/Dashboard/CustomersDashboard/MyRequests/MyRequests';
+import NewJobRequest from './Components/Dashboard/WorkersDashboard/NewJobRequest/NewJobRequest';
 
 const App = () => {
   return (
@@ -19,9 +20,8 @@ const App = () => {
         
         {/* Workers Dashboard Routes */}
         <Route path='/workersdashboard' element={<WorkersDashboard />}>
-          <Route path='myprofile' element={<Myprofile />} >
-              
-          </Route>
+          <Route path='myprofile' element={<Myprofile />} />
+          <Route path='newrequest' element={<NewJobRequest />} />
           
         </Route>
         
